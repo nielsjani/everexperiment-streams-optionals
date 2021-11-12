@@ -1,1 +1,3 @@
-Start with fixing the tests in getting started
+Start with fixing the tests in GettingStarted
+
+Then Continue to Wandvision
