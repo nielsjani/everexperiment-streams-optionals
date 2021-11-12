@@ -3,19 +3,18 @@ package streams;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GettingStarted {
+public class GettingStartedSolutions {
 
     @Test
     public void bringMeThanos() {
         List<String> blackOrder = Lists.list("Proxima Midnight", "Corvus Glaive", "Ebony Maw", "Thanos", "Cull Obsidian", "Supergiant");
 
-        String actual = null;
+        String actual = blackOrder.stream().filter(x -> x.equals("Thanos")).findFirst().orElseThrow();
 
         assertThat(actual).isEqualTo("Thanos");
     }
@@ -31,7 +30,10 @@ public class GettingStarted {
                 "Soul Stone", "Vormir"
         );
 
-        List<String> actual = null;
+        List<String> actual = stonesLocations.keySet()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
 
         //results should be sorted alphabetically descending
         assertThat(actual).containsExactly(
@@ -58,7 +60,10 @@ public class GettingStarted {
 
         List<List<String>> participants = List.of(originalAvengers, goopSellers, infinityGemPoweredIndividuals, anthropomorphicAnimals, wakanda, guardiansOfTheGalaxy, mastersOfTheMysticArts, sizeChangers, others);
 
-        Set<String> actual = null;
+        Set<String> actual = participants
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
 
         assertThat(actual).containsExactlyInAnyOrder(
                 "Captain America", "Hawkeye", "Thor", "Iron Man", "Hulk",
@@ -84,7 +89,10 @@ public class GettingStarted {
                 "Hawkeye", 1982
         );
 
-        Integer actual = null;
+        Integer actual = avengerBirthYear.values()
+                .stream().map(v -> 2012 - v)
+                .mapToInt(v -> v)
+                .sum();
 
         //The battle took place in 2012
         assertThat(actual).isEqualTo(1285);
@@ -101,7 +109,11 @@ public class GettingStarted {
                 "Hawkeye", 1982
         );
 
-        Double actual = null;
+        Double actual = avengerBirthYear.values()
+                .stream().map(v -> 2012 - v)
+                .mapToDouble(v -> v)
+                .summaryStatistics()
+                .getAverage();
 
         //The battle took place in 2012
         assertThat(actual).isEqualTo(214.16666666666666);
@@ -116,13 +128,15 @@ public class GettingStarted {
                 new Quote("Puny god", "Hulk", "Avengers")
         );
 
-        String actual = null;
+        String actual = quotes.stream()
+                .map(qoute -> String.format("%s as said by %s in %s", qoute.getText(), qoute.getSpeaker(), qoute.getMovie()))
+                .reduce("The quotes:", (q1, q2) -> q1 + q2);
 
         assertThat(actual).isEqualTo(
-                "The quotes:"+
-                "On your left as said by Captain America in Winter Soldier"+
-                        "On your left as said by Falcon in Endgame"+
-                        "Peace in our time as said by Iron Man in Age of Ultron"+
+                "The quotes:" +
+                        "On your left as said by Captain America in Winter Soldier" +
+                        "On your left as said by Falcon in Endgame" +
+                        "Peace in our time as said by Iron Man in Age of Ultron" +
                         "Puny god as said by Hulk in Avengers"
         );
     }
@@ -150,6 +164,10 @@ public class GettingStarted {
             return movie;
         }
     }
- }
+}
 
-
+//avengerBirthYear.values()
+//                .stream().map(v -> 2012 - v)
+//                .mapToDouble(v -> v)
+//                .summaryStatistics()
+//                .getAverage()
