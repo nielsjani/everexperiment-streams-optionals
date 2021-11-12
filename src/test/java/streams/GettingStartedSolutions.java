@@ -2,6 +2,8 @@ package streams;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import streams.GettingStarted.PersonCondition;
+import streams.GettingStarted.Quote;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -141,33 +143,46 @@ public class GettingStartedSolutions {
         );
     }
 
-    public static class Quote {
-        private final String text;
-        private final String speaker;
-        private final String movie;
+    @Test
+    public void canAnyoneOnTheTeamSurviveInfinityGems_Ultron_Visions_GalaxyDestroyingBomb() {
+        List<PersonCondition> multiversalAvengers = List.of(
+                new PersonCondition("Loki-Bromance Thor", false),
+                new PersonCondition("Thanos-Gamora", false),
+                new PersonCondition("Heartbroken Dr Strange", true),
+                new PersonCondition("Age of Ultron Black Widow", false),
+                new PersonCondition("Captain Carter", false),
+                new PersonCondition("Star-Lord T'Challa", false),
+                new PersonCondition("Black Panther KillMonger", false)
+        );
 
-        public Quote(String text, String speaker, String movie) {
-            this.text = text;
-            this.speaker = speaker;
-            this.movie = movie;
-        }
+        boolean canAnyoneSurvive = multiversalAvengers.stream()
+                .anyMatch(PersonCondition::isCondition);
 
-        public String getText() {
-            return text;
-        }
-
-        public String getSpeaker() {
-            return speaker;
-        }
-
-        public String getMovie() {
-            return movie;
-        }
+        assertThat(canAnyoneSurvive).isTrue();
     }
-}
 
-//avengerBirthYear.values()
-//                .stream().map(v -> 2012 - v)
-//                .mapToDouble(v -> v)
-//                .summaryStatistics()
-//                .getAverage()
+    @Test
+    public void didTheseVariantsSurvive() {
+        List<PersonCondition> lokiVariants = List.of(
+                new PersonCondition("Endgame Loki", true),
+                new PersonCondition("Lokigator", true),
+                new PersonCondition("Kid Loki", true)
+        );
+
+        boolean didTheyAllSurvive = lokiVariants.stream().allMatch(PersonCondition::isCondition);
+
+        assertThat(didTheyAllSurvive).isTrue();
+
+        List<PersonCondition> lokiVariants2 = List.of(
+                new PersonCondition("Endgame Loki", true),
+                new PersonCondition("Lokigator", true),
+                new PersonCondition("Kid Loki", true),
+                new PersonCondition("President Loki", false)
+        );
+
+        Boolean didTheyAllSurviveNow = lokiVariants2.stream().allMatch(PersonCondition::isCondition);
+
+        assertThat(didTheyAllSurviveNow).isFalse();
+    }
+
+}

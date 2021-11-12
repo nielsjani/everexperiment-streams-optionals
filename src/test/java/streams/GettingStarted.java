@@ -127,6 +127,65 @@ public class GettingStarted {
         );
     }
 
+    @Test
+    public void canAnyoneOnTheTeamSurviveInfinityGems_Ultron_Visions_GalaxyDestroyingBomb() {
+        List<PersonCondition> multiversalAvengers = List.of(
+                new PersonCondition("Loki-Bromance Thor", false),
+                new PersonCondition("Thanos-Gamora", false),
+                new PersonCondition("Heartbroken Dr Strange", true),
+                new PersonCondition("Age of Ultron Black Widow", false),
+                new PersonCondition("Captain Carter", false),
+                new PersonCondition("Star-Lord T'Challa", false),
+                new PersonCondition("Black Panther KillMonger", false)
+        );
+
+        boolean canAnyoneSurvive = false;
+
+        assertThat(canAnyoneSurvive).isTrue();
+    }
+
+    @Test
+    public void didTheseVariantsSurvive() {
+        List<PersonCondition> lokiVariants = List.of(
+                new PersonCondition("Endgame Loki", true),
+                new PersonCondition("Lokigator", true),
+                new PersonCondition("Kid Loki", true)
+        );
+
+        boolean didTheyAllSurvive = false;
+
+        assertThat(didTheyAllSurvive).isTrue();
+
+        List<PersonCondition> lokiVariants2 = List.of(
+                new PersonCondition("Endgame Loki", true),
+                new PersonCondition("Lokigator", true),
+                new PersonCondition("Kid Loki", true),
+                new PersonCondition("President Loki", false)
+        );
+
+        Boolean didTheyAllSurviveNow = null;
+
+        assertThat(didTheyAllSurviveNow).isFalse();
+    }
+
+    public static class PersonCondition {
+        private final String person;
+        private final boolean condition;
+
+        public PersonCondition(String person, boolean condition) {
+            this.person = person;
+            this.condition = condition;
+        }
+
+        public String getPerson() {
+            return person;
+        }
+
+        public boolean isCondition() {
+            return condition;
+        }
+    }
+
     public static class Quote {
         private final String text;
         private final String speaker;
