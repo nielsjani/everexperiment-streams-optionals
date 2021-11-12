@@ -119,10 +119,10 @@ public class GettingStarted {
         String actual = null;
 
         assertThat(actual).isEqualTo(
-                "The quotes:"+
-                "On your left as said by Captain America in Winter Soldier"+
-                        "On your left as said by Falcon in Endgame"+
-                        "Peace in our time as said by Iron Man in Age of Ultron"+
+                "The quotes:" +
+                        "On your left as said by Captain America in Winter Soldier" +
+                        "On your left as said by Falcon in Endgame" +
+                        "Peace in our time as said by Iron Man in Age of Ultron" +
                         "Puny god as said by Hulk in Avengers"
         );
     }
@@ -168,6 +168,46 @@ public class GettingStarted {
         assertThat(didTheyAllSurviveNow).isFalse();
     }
 
+    @Test
+    public void theCollectorIndexesHisInventory() {
+        List<Item> items = List.of(
+                new Item("Species", "Human"),
+                new Item("Animals", "Hit-Monkey"),
+                new Item("Animals", "Cosmo"),
+                new Item("Items", "Casket of Winter"),
+                new Item("Animals", "Howard"),
+                new Item("Items", "Hela's Crown"),
+                new Item("Priceless", "Niels Jani's Autograph"),
+                new Item("Species", "Sakaarian")
+                );
+
+        Map<String, List<String>> categorized = null;
+
+        assertThat(categorized).hasSize(4);
+        assertThat(categorized.get("Species")).containsExactlyInAnyOrder("Human", "Sakaarian");
+        assertThat(categorized.get("Items")).containsExactlyInAnyOrder("Casket of Winter", "Hela's Crown");
+        assertThat(categorized.get("Animals")).containsExactlyInAnyOrder("Hit-Monkey", "Cosmo", "Howard");
+        assertThat(categorized.get("Priceless")).containsExactlyInAnyOrder("Niels Jani's Autograph");
+    }
+
+    public static class Item {
+        private final String category;
+        private final String name;
+
+        public Item(String category, String name) {
+            this.category = category;
+            this.name = name;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     public static class PersonCondition {
         private final String person;
         private final boolean condition;
@@ -209,6 +249,6 @@ public class GettingStarted {
             return movie;
         }
     }
- }
+}
 
 

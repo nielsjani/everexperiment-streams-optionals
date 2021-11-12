@@ -2,6 +2,7 @@ package streams;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import streams.GettingStarted.Item;
 import streams.GettingStarted.PersonCondition;
 import streams.GettingStarted.Quote;
 
@@ -185,4 +186,30 @@ public class GettingStartedSolutions {
         assertThat(didTheyAllSurviveNow).isFalse();
     }
 
+
+    @Test
+    public void theCollectorIndexesHisInventory() {
+        List<Item> items = List.of(
+                new Item("Species", "Human"),
+                new Item("Animals", "Hit-Monkey"),
+                new Item("Animals", "Cosmo"),
+                new Item("Items", "Casket of Winter"),
+                new Item("Animals", "Howard"),
+                new Item("Items", "Hela's Crown"),
+                new Item("Priceless", "Niels Jani's Autograph"),
+                new Item("Species", "Sakaarian")
+        );
+
+        Map<String, List<String>> categorized = items.stream()
+                .collect(Collectors.groupingBy(Item::getCategory,
+                        Collectors.mapping(
+                                Item::getName, Collectors.toList())
+                ));
+
+        assertThat(categorized).hasSize(4);
+        assertThat(categorized.get("Species")).containsExactlyInAnyOrder("Human", "Sakaarian");
+        assertThat(categorized.get("Items")).containsExactlyInAnyOrder("Casket of Winter", "Hela's Crown");
+        assertThat(categorized.get("Animals")).containsExactlyInAnyOrder("Hit-Monkey", "Cosmo", "Howard");
+        assertThat(categorized.get("Priceless")).containsExactlyInAnyOrder("Niels Jani's Autograph");
+    }
 }
