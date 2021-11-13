@@ -4,6 +4,7 @@ import optionals.HailHydra.KeyCard;
 import optionals.HailHydra.ShieldPersonnel;
 import optionals.mocked.ArnimZolaDB;
 import optionals.mocked.EscapeOptions;
+import optionals.mocked.MindControlStatus;
 import optionals.mocked.ShieldDisasterProtocols;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +33,8 @@ public class HailHydraSolutions {
     private ArnimZolaDB arnimZolaDB;
     @Mock
     private EscapeOptions escapeOptions;
+    @Mock
+    private MindControlStatus mindControlStatus;
 
     @Test
     public void shieldClearanceLevel8RequiredToEnter() {
@@ -124,6 +129,27 @@ public class HailHydraSolutions {
 
         verify(escapeOptions, times(4)).headLeft();
         verify(escapeOptions, times(5)).headRight();
+    }
+
+    @Test
+    public void bringingBackBucky() {
+        //Bucky is battling his mind-control.
+        // As long as his mind control status is still active (aka not returning an empty optional) he considers himself 'The Winter Soldier'
+        //If his Mind control status is lifted, he becomes Bucky again
+
+        //Expand this supplier so it return an optional with value 'Bucky Barnes' if the mindcontrolstatus returns an empty optional
+        Supplier<Optional<String>> mindControlCheck = () -> mindControlStatus.getPersona()
+                .or(() -> Optional.of("Bucky Barnes"));
+
+        //mind control still in place
+        when(mindControlStatus.getPersona()).thenReturn(Optional.of("The Winter Soldier"));
+        Optional<String> persona1 = mindControlCheck.get();
+        Assertions.assertThat(persona1).hasValue("The Winter Soldier");
+
+        //mind control lifted
+        when(mindControlStatus.getPersona()).thenReturn(Optional.empty());
+        Optional<String> persona2 = mindControlCheck.get();
+        Assertions.assertThat(persona2).hasValue("Bucky Barnes");
     }
 
     private String doQuery(String arg) {

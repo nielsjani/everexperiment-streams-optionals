@@ -2,6 +2,7 @@ package optionals;
 
 import optionals.mocked.ArnimZolaDB;
 import optionals.mocked.EscapeOptions;
+import optionals.mocked.MindControlStatus;
 import optionals.mocked.ShieldDisasterProtocols;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class HailHydra {
@@ -28,6 +30,8 @@ public class HailHydra {
     private ArnimZolaDB arnimZolaDB;
     @Mock
     private EscapeOptions escapeOptions;
+    @Mock
+    private MindControlStatus mindControlStatus;
 
     @Test
     public void shieldClearanceLevel8RequiredToEnter() {
@@ -107,6 +111,26 @@ public class HailHydra {
 
         verify(escapeOptions, times(4)).headLeft();
         verify(escapeOptions, times(5)).headRight();
+    }
+
+    @Test
+    public void bringingBackBucky() {
+        //Bucky is battling his mind-control.
+        // As long as his mind control status is still active (aka not returning an empty optional) he considers himself 'The Winter Soldier'
+        //If his Mind control status is lifted, he becomes Bucky again
+
+        //Expand this supplier so it return an optional with value 'Bucky Barnes' if the mindcontrolstatus returns an empty optional
+        Supplier<Optional<String>> mindControlCheck = () -> mindControlStatus.getPersona();
+
+        //mind control still in place
+        when(mindControlStatus.getPersona()).thenReturn(Optional.of("The Winter Soldier"));
+        Optional<String> persona1 = mindControlCheck.get();
+        Assertions.assertThat(persona1).hasValue("The Winter Soldier");
+
+        //mind control lifted
+        when(mindControlStatus.getPersona()).thenReturn(Optional.empty());
+        Optional<String> persona2 = mindControlCheck.get();
+        Assertions.assertThat(persona2).hasValue("Bucky Barnes");
     }
 
     public static class ShieldPersonnel {

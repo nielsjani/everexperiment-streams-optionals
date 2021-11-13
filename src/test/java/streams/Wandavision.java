@@ -79,7 +79,7 @@ public class Wandavision {
 
         steps
                 //implement here: as soon as the transformation is complete, stop processing elements
-                //dont re-use any code used to fix the above test. Also, still not allowed to filter, map or sort
+                //dont re-use any code used to fix the mindAlterations test. Also, still not allowed to filter, map or sort
                 .forEach(step -> mindAlteration.process(step.getDescription()));
 
         Mockito.verify(mindAlteration, times(6)).process(any());
