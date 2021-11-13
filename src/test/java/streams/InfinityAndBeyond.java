@@ -6,10 +6,14 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GettingStarted {
+public class InfinityAndBeyond {
 
     @Test
     public void bringMeThanos() {
@@ -18,6 +22,15 @@ public class GettingStarted {
         String actual = null;
 
         assertThat(actual).isEqualTo("Thanos");
+    }
+
+    @Test
+    public void timeTravelGoneWrong() {
+        try {
+            reverseThePolarityOfTheNeutronFlow();
+        } catch (Exception e) {
+            fail("fix the function");
+        }
     }
 
     @Test
@@ -188,6 +201,26 @@ public class GettingStarted {
         assertThat(categorized.get("Items")).containsExactlyInAnyOrder("Casket of Winter", "Hela's Crown");
         assertThat(categorized.get("Animals")).containsExactlyInAnyOrder("Hit-Monkey", "Cosmo", "Howard");
         assertThat(categorized.get("Priceless")).containsExactlyInAnyOrder("Niels Jani's Autograph");
+    }
+
+    public static void reverseThePolarityOfTheNeutronFlow() {
+        List<Item> timetravelLocations = List.of(
+                new Item("DANGEROUS", "Battle of New York"),
+                new Item("UNKNOWN", "Vormir"),
+                new Item("SAFE", "SHIELD Base"),
+                new Item("SAFE", "Asgard"),
+                new Item("DANGEROUS", "Morag")
+        );
+
+        Predicate<Item> dangerousPredicate = item -> item.getCategory().equals("DANGEROUS");
+        Predicate<Item> safePredicate = item -> item.getCategory().equals("SAFE");
+        Predicate<Item> unknownPredicate = item -> item.getCategory().equals("UNKNOWN");
+
+        Stream<Item> stream = timetravelLocations.stream();
+
+        List<Item> dangerousLocations = stream.filter(dangerousPredicate).collect(Collectors.toList());
+        List<Item> safeLocations = stream.filter(safePredicate).collect(Collectors.toList());
+        List<Item> unknownLocations = stream.filter(unknownPredicate).collect(Collectors.toList());
     }
 
     public static class Item {

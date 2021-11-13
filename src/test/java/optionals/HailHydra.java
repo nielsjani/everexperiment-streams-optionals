@@ -1,6 +1,9 @@
 package optionals;
 
+import optionals.mocked.ArnimZolaDB;
+import optionals.mocked.EscapeOptions;
 import optionals.mocked.ShieldDisasterProtocols;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -11,14 +14,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class HailHydra {
 
     @Mock
     private ShieldDisasterProtocols shieldDisasterProtocols;
+    @Mock
+    private ArnimZolaDB arnimZolaDB;
+    @Mock
+    private EscapeOptions escapeOptions;
 
     @Test
     public void shieldClearanceLevel8RequiredToEnter() {
@@ -52,6 +61,52 @@ public class HailHydra {
         Mockito.verify(shieldDisasterProtocols, times(1)).sendToMedicalWard(any());
         Mockito.verify(shieldDisasterProtocols, times(1)).buryDeceased();
         Mockito.verify(shieldDisasterProtocols, times(1)).sendToPrison(any());
+    }
+
+    @Test
+    public void capAndNatQueryArnimZolasDatabase() {
+        //Arnim Zola has protected his systems against unwanted intruders.
+        // A wrong query (aka empty optional) should trigger a self-destruct sequence (aka throw an exception)
+        Mockito.when(arnimZolaDB.query("Red Skull")).thenReturn(Optional.of("Elrond"));
+        Mockito.when(arnimZolaDB.query("Is Hydra still active")).thenReturn(Optional.empty());
+
+
+        Optional<String> validQuery = arnimZolaDB.query("Red Skull");
+        Assertions.assertThat(validQuery).isEqualTo("Elrond");
+
+        IllegalArgumentException expectedException = assertThrows(
+                IllegalArgumentException.class,
+                () -> arnimZolaDB.query("Is Hydra still active"));
+        Assertions.assertThat(expectedException).hasMessage("Goodbye Captain. Self-destructing in 5...4...3...");
+    }
+
+    @Test
+    public void escapingZolasSelfDestructingUndergroundComplex() {
+        //To exit Zolas complex you need to navigate a labyrinth of tunnels.
+        // Luckily, Nick Fury is helping you find the right way.
+        //If you reach a split and a red light is blinking, head left. Otherwise, head right.
+        //It seems our heroes followed Fury's directions, but they still didn't manage to find the exit.
+        // Can you help them? (Don't change the assertions)
+
+        List<Optional<String>> lightSignals = List.of(
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of("Blinking"),
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.empty()
+        );
+
+        lightSignals.forEach(signalOpt ->
+                signalOpt.map(signal -> escapeOptions.headLeft())
+                        .orElse(escapeOptions.headRight())
+        );
+
+        verify(escapeOptions, times(4)).headLeft();
+        verify(escapeOptions, times(5)).headRight();
     }
 
     public static class ShieldPersonnel {

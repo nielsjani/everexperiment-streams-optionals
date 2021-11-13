@@ -2,16 +2,17 @@ package streams;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
-import streams.GettingStarted.Item;
-import streams.GettingStarted.PersonCondition;
-import streams.GettingStarted.Quote;
+import streams.InfinityAndBeyond.Item;
+import streams.InfinityAndBeyond.PersonCondition;
+import streams.InfinityAndBeyond.Quote;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GettingStartedSolutions {
+public class InfinityAndBeyondSolutions {
 
     @Test
     public void bringMeThanos() {
@@ -20,6 +21,16 @@ public class GettingStartedSolutions {
         String actual = blackOrder.stream().filter(x -> x.equals("Thanos")).findFirst().orElseThrow();
 
         assertThat(actual).isEqualTo("Thanos");
+    }
+
+    @Test
+    public void timeTravelGoneWrong() {
+        try {
+            //Fix is to not reuse the stream, start each filter.collect from the initial list
+//            reverseThePolarityOfTheNeutronFlow();
+        } catch (Exception e) {
+            fail("fix the function");
+        }
     }
 
     @Test

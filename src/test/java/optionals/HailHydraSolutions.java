@@ -2,7 +2,10 @@ package optionals;
 
 import optionals.HailHydra.KeyCard;
 import optionals.HailHydra.ShieldPersonnel;
+import optionals.mocked.ArnimZolaDB;
+import optionals.mocked.EscapeOptions;
 import optionals.mocked.ShieldDisasterProtocols;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,14 +17,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HailHydraSolutions {
 
     @Mock
     private ShieldDisasterProtocols shieldDisasterProtocols;
+    @Mock
+    private ArnimZolaDB arnimZolaDB;
+    @Mock
+    private EscapeOptions escapeOptions;
 
     @Test
     public void shieldClearanceLevel8RequiredToEnter() {
@@ -67,5 +75,59 @@ public class HailHydraSolutions {
         Mockito.verify(shieldDisasterProtocols, times(1)).sendToMedicalWard(any());
         Mockito.verify(shieldDisasterProtocols, times(1)).buryDeceased();
         Mockito.verify(shieldDisasterProtocols, times(1)).sendToPrison(any());
+    }
+
+    @Test
+    public void capAndNatQueryArnimZolasDatabase() {
+        //Arnim Zola has protected his systems against unwanted intruders.
+        // A wrong query (aka empty optional) should trigger a self-destruct sequence (aka throw an exception)
+        when(arnimZolaDB.query("Red Skull")).thenReturn(Optional.of("Elrond"));
+        when(arnimZolaDB.query("Is Hydra still active")).thenReturn(Optional.empty());
+
+        String validQuery = doQuery("Red Skull");
+        Assertions.assertThat(validQuery).isEqualTo("Elrond");
+
+        IllegalArgumentException expectedException = assertThrows(
+                IllegalArgumentException.class,
+                () -> doQuery("Is Hydra still active"));
+
+        Assertions.assertThat(expectedException).hasMessage("Goodbye Captain. Self-destructing in 5...4...3...");
+    }
+
+    @Test
+    public void escapingZolasSelfDestructingUndergroundComplex() {
+        //To exit Zolas complex you need to navigate a labyrinth of tunnels.
+        // Luckily, Nick Fury is helping you find the right way.
+        //If you reach a split and a red light is blinking, head left. Otherwise, head right.
+        //It seems our heroes followed Fury's directions, but they still didn't manage to find the exit.
+        // Can you help them? (Don't change the assertions)
+
+        when(escapeOptions.headLeft()).thenReturn("L");
+        when(escapeOptions.headRight()).thenReturn("R");
+
+        List<Optional<String>> lightSignals = List.of(
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of("Blinking"),
+                Optional.of("Blinking"),
+                Optional.empty(),
+                Optional.empty()
+                );
+
+        lightSignals.forEach(signalOpt ->
+                signalOpt.map(signal -> escapeOptions.headLeft())
+                        .orElseGet(escapeOptions::headRight)
+        );
+
+        verify(escapeOptions, times(4)).headLeft();
+        verify(escapeOptions, times(5)).headRight();
+    }
+
+    private String doQuery(String arg) {
+       return arnimZolaDB.query(arg)
+                .orElseThrow(() -> new IllegalArgumentException("Goodbye Captain. Self-destructing in 5...4...3..."));
     }
 }
